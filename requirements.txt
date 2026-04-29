@@ -1,8 +1,12 @@
-# المكتبات المطلوبة لتشغيل الخادم (server.py)
+# ===========================================
+# Remote Camera Control Tool — Dependencies
+# ===========================================
+
+# Server dependencies (GUI framework)
 PyQt5
 
-# المكتبات المطلوبة لتشغيل العميل (client.py)
+# Client dependencies (webcam capture)
 opencv-python
 
-# المكتبات المطلوبة لعملية البناء (تحويل العميل إلى .exe)
+# Build dependencies (compile client to .exe)
 pyinstaller

